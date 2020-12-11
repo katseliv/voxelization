@@ -16,23 +16,27 @@ import java.util.List;
 
 /**
  * Описывает параллелипипед по двум диагональным точкам
+ *
  * @author Alexey
  */
 public class Parallelepiped implements IModel {
     private final Vector3 LTF;
     private final Vector3 RBN;
+    private float radius;
 
     /**
      * Создаёт экземпляр параллелипипеда
+     *
      * @param LTF Левая Верхняя Дальняя точка (Left Top Far)
      * @param RBN Правая Нижняя Ближняя точка (Right Bottom Near)
      */
     public Parallelepiped(Vector3 LTF, Vector3 RBN) {
         this.LTF = LTF;
         this.RBN = RBN;
+        this.radius = LTF.length();
     }
 
-    public Parallelepiped(Vector3 center, float radius){
+    public Parallelepiped(Vector3 center, float radius) {
         this.LTF = new Vector3(
                 center.getX() - radius,
                 center.getY() - radius,
@@ -41,6 +45,15 @@ public class Parallelepiped implements IModel {
                 center.getX() + radius,
                 center.getY() + radius,
                 center.getZ() + radius);
+        this.radius = radius;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public Vector3 getCenter() {
+        return new Vector3(LTF.getX() - RBN.getX() / 2, LTF.getY() - RBN.getY() / 2, LTF.getZ() - RBN.getZ() / 2);
     }
 
     @Override
@@ -58,7 +71,7 @@ public class Parallelepiped implements IModel {
                 new Vector3(LTF.getX(), RBN.getY(), RBN.getZ()),
                 new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()),
                 new Vector3(RBN.getX(), LTF.getY(), RBN.getZ())), true));
-        
+
         /*Верхняя сторона (Y фиксирован и взят у LTF)*/
         lines.add(new PolyLine3D(Arrays.asList(
                 new Vector3(LTF.getX(), LTF.getY(), LTF.getZ()),
@@ -71,7 +84,7 @@ public class Parallelepiped implements IModel {
                 new Vector3(LTF.getX(), RBN.getY(), RBN.getZ()),
                 new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()),
                 new Vector3(RBN.getX(), RBN.getY(), LTF.getZ())), true));
-        
+
         /*Левая сторона (X фиксирован и взят у LTF)*/
         lines.add(new PolyLine3D(Arrays.asList(
                 new Vector3(LTF.getX(), LTF.getY(), LTF.getZ()),
@@ -84,7 +97,7 @@ public class Parallelepiped implements IModel {
                 new Vector3(RBN.getX(), LTF.getY(), RBN.getZ()),
                 new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()),
                 new Vector3(RBN.getX(), RBN.getY(), LTF.getZ())), true));
-        
+
         return lines;
     }
 
@@ -135,7 +148,7 @@ public class Parallelepiped implements IModel {
         polygons.add(new MyPolygon(
                 new Vector3(RBN.getX(), LTF.getY(), LTF.getZ()),
                 new Vector3(LTF.getX(), LTF.getY(), LTF.getZ()),
-                new Vector3(LTF.getX(), LTF.getY(), RBN.getZ()),  Color.BLACK));
+                new Vector3(LTF.getX(), LTF.getY(), RBN.getZ()), Color.BLACK));
         /*Правая сторона (X фиксирован и взят у RBN)*/
         polygons.add(new MyPolygon(
                 new Vector3(LTF.getX(), RBN.getY(), LTF.getZ()),

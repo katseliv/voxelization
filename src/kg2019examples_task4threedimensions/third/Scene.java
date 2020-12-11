@@ -7,6 +7,7 @@ package kg2019examples_task4threedimensions.third;
 import kg2019examples_task4threedimensions.draw.IDrawer;
 import kg2019examples_task4threedimensions.math.Vector3;
 import kg2019examples_task4threedimensions.models.Line3D;
+import kg2019examples_task4threedimensions.operations.VoxelOperation;
 
 import java.awt.*;
 import java.util.List;
@@ -94,14 +95,14 @@ public class Scene {
         drawer.draw(lines);
     }
 
-    public void drawSceneOfPolygons(IDrawer drawer, ICamera cam){
+    public void drawSceneOfPolygons(IDrawer drawer, ICamera cam) {
         List<MyPolygon> polygons = new LinkedList<>();
         LinkedList<Collection<? extends IModel>> allModels = new LinkedList<>();
         allModels.add(models);
         /*Если требуется, то добавляем оси координат*/
         if (isShowAxes())
             allModels.add(axes);
-        /*перебираем все полилинии во всех моделях*/
+        /*перебираем все полигоны во всех моделях*/
         for (Collection<? extends IModel> mc : allModels) {
             for (IModel m : mc) {
                 for (MyPolygon polygon : m.getPolygons()) {
@@ -125,4 +126,5 @@ public class Scene {
         /*Рисуем все линии*/
         drawer.drawPolygon(polygons);
     }
+
 }

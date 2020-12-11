@@ -8,27 +8,23 @@ import kg2019examples_task4threedimensions.draw.IDrawer;
 import kg2019examples_task4threedimensions.draw.PolygonDrawer;
 import kg2019examples_task4threedimensions.draw.SimpleEdgeDrawer;
 import kg2019examples_task4threedimensions.math.Vector3;
-import kg2019examples_task4threedimensions.models.Cylinder;
-import kg2019examples_task4threedimensions.models.Parallelepiped;
-import kg2019examples_task4threedimensions.models.Pyramid;
-import kg2019examples_task4threedimensions.models.Sphere;
+import kg2019examples_task4threedimensions.models.*;
+import kg2019examples_task4threedimensions.operations.VoxelOperation;
 import kg2019examples_task4threedimensions.screen.ScreenConverter;
 import kg2019examples_task4threedimensions.third.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * @author Alexey
  */
+
 public class DrawPanel extends JPanel implements CameraController.RepaintListener {
     public final Scene scene = new Scene(Color.BLACK.getRGB());
-    private final VoxelOperation voxelOperation = new VoxelOperation();
     private final ScreenConverter screenConverter;
     private final Camera camera;
 
@@ -39,24 +35,42 @@ public class DrawPanel extends JPanel implements CameraController.RepaintListene
         CameraController cameraController = new CameraController(camera, screenConverter);
         scene.showAxes();
 
-//        scene.getModelsList().add(new Parallelepiped(
-//                new Vector3(-40f, -40f, -40f),
-//                new Vector3(0f, 0f, 0f)
-//        ));
+        VoxelOperation voxelOperation = new VoxelOperation();
 
-        scene.getModelsList().add(new Parallelepiped(new Vector3(0, 0, 0), 10));
-        scene.getModelsList().addAll(voxelOperation.modelToVoxelOfCubs(new Parallelepiped(new Vector3(0, 0, 0), 10), 1f));
+//        scene.getModelsList().add(new Parallelepiped(new Vector3(0, 0, 0), 100));
+//        scene.getModelsList().addAll(voxelOperation.modelToVoxelOfCubs(new Parallelepiped(new Vector3(0, 0, 0), 100), 20f));
+        scene.getModelsList().add(new Sphere(new Vector3(0, 0, 400)));
+        scene.getModelsList().addAll(voxelOperation.modelToVoxelOfCubs(new Sphere(new Vector3(0, 0, 400)), 20f));
+        scene.getModelsList().add(new Pyramid(new Vector3(0, -600, 0)));
+//        scene.getModelsList().addAll(voxelOperation.modelToVoxelOfCubs(new Pyramid(new Vector3(0,-600,0)), 20f));
 
-        scene.getModelsList().add(new Sphere(new Vector3(0,0,400)));
-        //scene.getModelsList().addAll(voxelOperation.modelToVoxelOfCubs(new Sphere(new Vector3(0,0,400)), 50f));
-//        scene.getModelsList().add(new Pyramid(new Vector3(0,-600,0)));
-//        scene.getModelsList().addAll(voxelOperation.modelToVoxelOfCubs(new Pyramid(new Vector3(0,-600,0)), 10f));
-        //scene.getModelsList().add(new Cylinder(new Vector3(0,800,0)));
+//        scene.getModelsList().add(new Cylinder(new Vector3(0, 800, 0)));
+//        scene.getModelsList().addAll(voxelOperation.modelToVoxelOfCubs(new Cylinder(new Vector3(0, 800, 0)), 200f));
+
+        scene.getModelsList().add(new Surface(new Vector3(10, 30, 800), 40, 30));
+        scene.getModelsList().addAll(voxelOperation.surfaceToVoxelOfCubs(new Surface(new Vector3(10, 30, 800), 40, 30), 100f, 100f));
 
         cameraController.addRepaintListener(this);
         addMouseListener(cameraController);
         addMouseMotionListener(cameraController);
         addMouseWheelListener(cameraController);
+    }
+
+    public void voxelizate() {
+        VoxelOperation voxelOperation = new VoxelOperation();
+        LinkedList<Collection<? extends IModel>> allModels = new LinkedList<>();
+        List<IModel> models = new LinkedList<>();
+        allModels.add(scene.getModelsList());
+
+        for (Collection<? extends IModel> mc : allModels) {
+            for (IModel m : mc) {
+                models.addAll(voxelOperation.modelToVoxelOfCubs(m, 20f));
+
+            }
+        }
+
+        scene.getModelsList().addAll(models);
+        repaint();
     }
 
     @Override
@@ -66,7 +80,6 @@ public class DrawPanel extends JPanel implements CameraController.RepaintListene
         Graphics2D graphics = (Graphics2D) bi.getGraphics();
         IDrawer dr = new SimpleEdgeDrawer(screenConverter, graphics);
         IDrawer drawerPolygons = new PolygonDrawer(screenConverter, graphics);
-
 
         scene.drawSceneOfPolygons(drawerPolygons, camera);
 

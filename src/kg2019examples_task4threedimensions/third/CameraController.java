@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package kg2019examples_task4threedimensions;
+package kg2019examples_task4threedimensions.third;
 
 import kg2019examples_task4threedimensions.math.Matrix4Factories;
 import kg2019examples_task4threedimensions.math.Vector3;

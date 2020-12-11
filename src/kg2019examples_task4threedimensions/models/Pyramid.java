@@ -13,10 +13,10 @@ import static java.lang.StrictMath.cos;
 import static java.lang.StrictMath.sin;
 
 public class Pyramid implements IModel {
-    private final int number = 8;
-    private final float radius = 100f;
-    private final float height = 400f;
     private final Vector3 center;
+    private final int number = 8;
+    private final float height = 400f;
+    private final float radius = 100f;
 
     public Pyramid(Vector3 center) {
         this.center = center;
@@ -56,7 +56,7 @@ public class Pyramid implements IModel {
 
         float x, y, z;
 
-        Vector3 vector0 = new Vector3(center.getX(),center.getY(), center.getZ() + height);
+        Vector3 vector0 = new Vector3(center.getX(), center.getY(), center.getZ() + height);
 
         for (float alpha = 0; alpha <= 2 * Math.PI; alpha += step) {
             x = (float) (radius * cos(alpha) + center.getX());

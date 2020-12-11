@@ -16,8 +16,8 @@ import java.util.*;
  * @author Alexey
  */
 public abstract class ScreenGraphicsDrawer implements IDrawer {
-    private ScreenConverter sc;
-    private Graphics2D gr;
+    private final ScreenConverter sc;
+    private final Graphics2D gr;
 
     /**
      * Создаёт экземпляр рисвальщика

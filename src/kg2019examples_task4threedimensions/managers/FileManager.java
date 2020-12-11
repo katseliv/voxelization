@@ -1,4 +1,4 @@
-package kg2019examples_task4threedimensions;
+package kg2019examples_task4threedimensions.managers;
 
 import kg2019examples_task4threedimensions.math.Vector3;
 import kg2019examples_task4threedimensions.third.MyPolygon;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class FileManager {
 
-    public List<MyPolygon> readFile(File file) {
+    public static List<MyPolygon> readFile(File file) {
         List<MyPolygon> polygons = new LinkedList<>();
         List<Vector3> points = new LinkedList<>();
 
@@ -57,7 +57,7 @@ public class FileManager {
         return readPolygons(file, points, polygons);
     }
 
-    private List<MyPolygon> readPolygons(File file, List<Vector3> points, List<MyPolygon> polygons) {
+    private static List<MyPolygon> readPolygons(File file, List<Vector3> points, List<MyPolygon> polygons) {
         try {
             FileReader fileReader = new FileReader(file);
             BufferedReader reader = new BufferedReader(fileReader);
@@ -110,17 +110,6 @@ public class FileManager {
         }
 
         return polygons;
-    }
-
-    private int returnIndex() {
-        return -1;
-    }
-
-    private String checkFileName(String fileName) {
-        if (!fileName.endsWith(".obj")) {
-            fileName += ".obj";
-        }
-        return fileName;
     }
 
     public void writeFile() {

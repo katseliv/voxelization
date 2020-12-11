@@ -13,8 +13,8 @@ import static java.lang.StrictMath.cos;
 import static java.lang.StrictMath.sin;
 
 public class Cylinder implements IModel {
-    private final float height = 100f;
-    private final float radius = 500f;
+    private final float height = 1000f;
+    private final float radius = 1000f;
     private final int approximate = 30;
     private final Vector3 center;
 
@@ -45,7 +45,6 @@ public class Cylinder implements IModel {
             points.add(new PolyLine3D(edges, false));
             edges.clear();
         }
-
 
         points.add(new PolyLine3D(circle1, true));
         points.add(new PolyLine3D(circle2, true));
