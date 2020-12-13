@@ -4,7 +4,6 @@ import kg2019examples_task4threedimensions.math.Vector3;
 import kg2019examples_task4threedimensions.third.IModel;
 import kg2019examples_task4threedimensions.third.MyPolygon;
 import kg2019examples_task4threedimensions.third.PolyLine3D;
-
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +38,10 @@ public class Surface implements IModel {
             }
             points.add(i, buffer);
         }
+    }
+
+    public List<LinkedList<Vector3>> getPoints() {
+        return points;
     }
 
     @Override

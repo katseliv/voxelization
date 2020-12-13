@@ -71,7 +71,7 @@ public class Vector3 {
     @Override
     public String toString() {
         return "Vector3{" +
-                "values=" + Arrays.toString(values) +
+                "values = " + Arrays.toString(values) +
                 '}';
     }
 }

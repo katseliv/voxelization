@@ -86,9 +86,9 @@ public class Cylinder implements IModel {
             int g = (int) (Math.random() * 255);
             int b = (int) (Math.random() * 255);
 
-            polygon = new MyPolygon(vector1, vector4, vector3, new Color(r, g, b));
+            polygon = new MyPolygon(vector3, vector4, vector1, new Color(r, g, b));
             polygons.add(polygon);
-            polygon = new MyPolygon(vector1, vector2, vector3, new Color(r, g, b));
+            polygon = new MyPolygon(vector3, vector2, vector1, new Color(r, g, b));
             polygons.add(polygon);
         }
 

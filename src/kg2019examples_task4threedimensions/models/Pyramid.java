@@ -14,7 +14,7 @@ import static java.lang.StrictMath.sin;
 
 public class Pyramid implements IModel {
     private final Vector3 center;
-    private final int number = 8;
+    private final int number = 9;
     private final float height = 400f;
     private final float radius = 100f;
 

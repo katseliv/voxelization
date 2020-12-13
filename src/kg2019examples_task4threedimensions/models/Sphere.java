@@ -16,7 +16,7 @@ public class Sphere implements IModel {
     private final float a = 100f;
     private final float b = 100f;
     private final float c = 100f;
-    private final int approximate = 20;
+    private final int approximate = 30;
     private final Vector3 center;
 
     public Sphere(Vector3 center) {

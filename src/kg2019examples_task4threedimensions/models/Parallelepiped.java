@@ -22,7 +22,8 @@ import java.util.List;
 public class Parallelepiped implements IModel {
     private final Vector3 LTF;
     private final Vector3 RBN;
-    private float radius;
+    private final Vector3 center;
+    private final float radius;
 
     /**
      * Создаёт экземпляр параллелипипеда
@@ -34,6 +35,9 @@ public class Parallelepiped implements IModel {
         this.LTF = LTF;
         this.RBN = RBN;
         this.radius = LTF.length();
+        this.center = new Vector3(LTF.getX() + radius,
+                LTF.getY() + radius,
+                LTF.getZ() + radius);
     }
 
     public Parallelepiped(Vector3 center, float radius) {
@@ -46,6 +50,7 @@ public class Parallelepiped implements IModel {
                 center.getY() + radius,
                 center.getZ() + radius);
         this.radius = radius;
+        this.center = center;
     }
 
     public float getRadius() {
@@ -53,7 +58,7 @@ public class Parallelepiped implements IModel {
     }
 
     public Vector3 getCenter() {
-        return new Vector3(LTF.getX() - RBN.getX() / 2, LTF.getY() - RBN.getY() / 2, LTF.getZ() - RBN.getZ() / 2);
+        return center;
     }
 
     @Override
@@ -104,60 +109,61 @@ public class Parallelepiped implements IModel {
     @Override
     public List<MyPolygon> getPolygons() {
         List<MyPolygon> polygons = new LinkedList<>();
+        Color color = Color.RED;
         /*Дальняя сторона (Z фиксирован и взят у LTF)*/
         polygons.add(new MyPolygon(
                 new Vector3(LTF.getX(), LTF.getY(), LTF.getZ()),
                 new Vector3(LTF.getX(), LTF.getY(), RBN.getZ()),
-                new Vector3(LTF.getX(), RBN.getY(), RBN.getZ()), Color.BLACK));
+                new Vector3(LTF.getX(), RBN.getY(), RBN.getZ()), color));
         polygons.add(new MyPolygon(
                 new Vector3(LTF.getX(), LTF.getY(), LTF.getZ()),
                 new Vector3(LTF.getX(), RBN.getY(), LTF.getZ()),
-                new Vector3(LTF.getX(), RBN.getY(), RBN.getZ()), Color.BLACK));
+                new Vector3(LTF.getX(), RBN.getY(), RBN.getZ()), color));
         /*Ближняя сторона  (Z фиксирован и взят у RBN)*/
         polygons.add(new MyPolygon(
                 new Vector3(RBN.getX(), RBN.getY(), LTF.getZ()),
                 new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()),
-                new Vector3(RBN.getX(), LTF.getY(), RBN.getZ()), Color.BLACK));
+                new Vector3(RBN.getX(), LTF.getY(), RBN.getZ()), color));
         polygons.add(new MyPolygon(
                 new Vector3(RBN.getX(), RBN.getY(), LTF.getZ()),
                 new Vector3(RBN.getX(), LTF.getY(), LTF.getZ()),
-                new Vector3(RBN.getX(), LTF.getY(), RBN.getZ()), Color.BLACK));
+                new Vector3(RBN.getX(), LTF.getY(), RBN.getZ()), color));
         /*Верхняя сторона (Y фиксирован и взят у LTF)*/
         polygons.add(new MyPolygon(
                 new Vector3(RBN.getX(), LTF.getY(), LTF.getZ()),
                 new Vector3(LTF.getX(), LTF.getY(), LTF.getZ()),
-                new Vector3(LTF.getX(), RBN.getY(), LTF.getZ()), Color.BLACK));
+                new Vector3(LTF.getX(), RBN.getY(), LTF.getZ()), color));
         polygons.add(new MyPolygon(
                 new Vector3(RBN.getX(), LTF.getY(), LTF.getZ()),
                 new Vector3(RBN.getX(), RBN.getY(), LTF.getZ()),
-                new Vector3(LTF.getX(), RBN.getY(), LTF.getZ()), Color.BLACK));
+                new Vector3(LTF.getX(), RBN.getY(), LTF.getZ()), color));
         /*Нижняя сторона (Y фиксирован и взят у RBN)*/
         polygons.add(new MyPolygon(
                 new Vector3(LTF.getX(), LTF.getY(), RBN.getZ()),
                 new Vector3(RBN.getX(), LTF.getY(), RBN.getZ()),
-                new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()), Color.BLACK));
+                new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()), color));
         polygons.add(new MyPolygon(
                 new Vector3(LTF.getX(), LTF.getY(), RBN.getZ()),
                 new Vector3(LTF.getX(), RBN.getY(), RBN.getZ()),
-                new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()), Color.BLACK));
+                new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()), color));
         /*Левая сторона (X фиксирован и взят у LTF)*/
         polygons.add(new MyPolygon(
                 new Vector3(RBN.getX(), LTF.getY(), LTF.getZ()),
                 new Vector3(RBN.getX(), LTF.getY(), RBN.getZ()),
-                new Vector3(LTF.getX(), LTF.getY(), RBN.getZ()), Color.BLACK));
+                new Vector3(LTF.getX(), LTF.getY(), RBN.getZ()), color));
         polygons.add(new MyPolygon(
                 new Vector3(RBN.getX(), LTF.getY(), LTF.getZ()),
                 new Vector3(LTF.getX(), LTF.getY(), LTF.getZ()),
-                new Vector3(LTF.getX(), LTF.getY(), RBN.getZ()), Color.BLACK));
+                new Vector3(LTF.getX(), LTF.getY(), RBN.getZ()), color));
         /*Правая сторона (X фиксирован и взят у RBN)*/
         polygons.add(new MyPolygon(
                 new Vector3(LTF.getX(), RBN.getY(), LTF.getZ()),
                 new Vector3(LTF.getX(), RBN.getY(), RBN.getZ()),
-                new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()), Color.BLACK));
+                new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()), color));
         polygons.add(new MyPolygon(
                 new Vector3(LTF.getX(), RBN.getY(), LTF.getZ()),
                 new Vector3(RBN.getX(), RBN.getY(), LTF.getZ()),
-                new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()), Color.BLACK));
+                new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()), color));
         return polygons;
     }
 

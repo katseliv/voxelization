@@ -19,13 +19,13 @@ import java.util.*;
  * @author Alexey
  */
 public class Scene {
-    private List<IModel> models = new ArrayList<>();
+    private final List<IModel> models = new ArrayList<>();
 
     public List<IModel> getModelsList() {
         return models;
     }
 
-    private int backgroundColor;
+    private final int backgroundColor;
 
     /**
      * Создаём сцену с заданным фоном
@@ -56,9 +56,9 @@ public class Scene {
     }
 
     private static final List<Line3D> axes = Arrays.asList(
-            new Line3D(new Vector3(0, 0, 0), new Vector3(1, 0, 0)),
-            new Line3D(new Vector3(0, 0, 0), new Vector3(0, 1, 0)),
-            new Line3D(new Vector3(0, 0, 0), new Vector3(0, 0, 1))
+            new Line3D(new Vector3(0, 0, 0), new Vector3(5000, 0, 0)),
+            new Line3D(new Vector3(0, 0, 0), new Vector3(0, 5000, 0)),
+            new Line3D(new Vector3(0, 0, 0), new Vector3(0, 0, 5000))
     );
 
     /**
@@ -98,10 +98,32 @@ public class Scene {
     public void drawSceneOfPolygons(IDrawer drawer, ICamera cam) {
         List<MyPolygon> polygons = new LinkedList<>();
         LinkedList<Collection<? extends IModel>> allModels = new LinkedList<>();
+
         allModels.add(models);
         /*Если требуется, то добавляем оси координат*/
-        if (isShowAxes())
-            allModels.add(axes);
+
+        for (IModel m : axes) {
+            for (MyPolygon polygon : m.getPolygons()) {
+                Color color;
+                /*Все точки конвертируем с помощью камеры*/
+                List<Vector3> points = new LinkedList<>();
+                points.add(cam.w2s(polygon.getPoint1()));
+                points.add(cam.w2s(polygon.getPoint2()));
+                points.add(cam.w2s(polygon.getPoint3()));
+
+                /*Создаём на их сонове новые полилинии, но в том виде, в котором их видит камера*/
+                if (polygon.getPoint2().getX() != 0) {
+                    color = Color.RED;
+                } else if (polygon.getPoint2().getY() != 0) {
+                    color = Color.GREEN;
+                } else {
+                    color = Color.BLUE;
+                }
+
+                polygons.add(new MyPolygon(points.get(0), points.get(1), points.get(2), color));
+            }
+        }
+
         /*перебираем все полигоны во всех моделях*/
         for (Collection<? extends IModel> mc : allModels) {
             for (IModel m : mc) {
@@ -113,10 +135,7 @@ public class Scene {
                     points.add(cam.w2s(polygon.getPoint3()));
 
                     /*Создаём на их сонове новые полилинии, но в том виде, в котором их видит камера*/
-                    int r = (int) (Math.random() * 255);
-                    int g = (int) (Math.random() * 255);
-                    int b = (int) (Math.random() * 255);
-                    polygons.add(new MyPolygon(points.get(0), points.get(1), points.get(2), new Color(r, g, b)));
+                    polygons.add(new MyPolygon(points.get(0), points.get(1), points.get(2), polygon.getColor()));
                 }
             }
         }
