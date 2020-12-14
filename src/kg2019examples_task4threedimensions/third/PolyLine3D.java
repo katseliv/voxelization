@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kg2019examples_task4threedimensions.third;
 
 import kg2019examples_task4threedimensions.math.Vector3;
@@ -57,5 +53,4 @@ public class PolyLine3D {
             sum += v.getZ();
         return sum / points.size();
     }
-    
 }

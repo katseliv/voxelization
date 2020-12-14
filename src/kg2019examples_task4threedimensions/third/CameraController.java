@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kg2019examples_task4threedimensions.third;
 
 import kg2019examples_task4threedimensions.math.Matrix4Factories;
@@ -9,7 +5,6 @@ import kg2019examples_task4threedimensions.math.Vector3;
 import kg2019examples_task4threedimensions.math.Vector4;
 import kg2019examples_task4threedimensions.screen.ScreenConverter;
 import kg2019examples_task4threedimensions.screen.ScreenPoint;
-import kg2019examples_task4threedimensions.third.Camera;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,13 +29,12 @@ public class CameraController implements MouseListener, MouseMotionListener, Mou
     /**
      * Интерфейс, объявляющий набор метод, которые обязан реализовать слушатель
      */
-    public static interface RepaintListener {
+    public interface RepaintListener {
         /**
          * Метод, вызываемый при изменении
          */
         void shouldRepaint();
     }
-    
     
     /* Далее описывается приватная коллекция, в данном случае - Set, 
      * где будет хрнаиться список всех слушателей, подписанных на данное событие.
@@ -74,11 +68,11 @@ public class CameraController implements MouseListener, MouseMotionListener, Mou
     /*=============== Конец паттерна "слушатель" ==================*/
     
     private Camera camera;
-    private ScreenConverter sc;
+    private ScreenConverter screenConverter;
 
     public CameraController(Camera camera, ScreenConverter sc) {
         this.camera = camera;
-        this.sc = sc;
+        this.screenConverter = sc;
     }
 
     public Camera getCamera() {
@@ -89,18 +83,16 @@ public class CameraController implements MouseListener, MouseMotionListener, Mou
         this.camera = camera;
     }
 
-    public ScreenConverter getSc() {
-        return sc;
+    public ScreenConverter getScreenConverter() {
+        return screenConverter;
     }
 
-    public void setSc(ScreenConverter sc) {
-        this.sc = sc;
+    public void setScreenConverter(ScreenConverter screenConverter) {
+        this.screenConverter = screenConverter;
     }
-    
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        
     }
 
     /*Здесь запоминаем последнее положение мыши, для которого обрабатывали событие*/
@@ -141,12 +133,10 @@ public class CameraController implements MouseListener, MouseMotionListener, Mou
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        
     }
 
     @Override
@@ -169,8 +159,8 @@ public class CameraController implements MouseListener, MouseMotionListener, Mou
             }
             /*Если двигаем с зажатой правой кнопкой мыши, то перемещаем камеру вдоль осей X и Y*/
             if (rightFlag) {
-                Vector4 zero = new Vector4(sc.s2r(new ScreenPoint(0, 0)), 0);
-                Vector4 cur = new Vector4(sc.s2r(new ScreenPoint(dx, dy)), 0);
+                Vector4 zero = new Vector4(screenConverter.s2r(new ScreenPoint(0, 0)), 0);
+                Vector4 cur = new Vector4(screenConverter.s2r(new ScreenPoint(dx, dy)), 0);
                 
                 /*Вектор смещения в реальных координатах с точки зрения камеры*/
                 Vector3 delta = cur.add(zero.mul(-1)).asVector3();
@@ -181,8 +171,8 @@ public class CameraController implements MouseListener, MouseMotionListener, Mou
              * Направление выбирается положительное при движении вверх.
              */
             if (middleFlag && dy != 0) {
-                Vector4 zero = new Vector4(sc.s2r(new ScreenPoint(0, 0)), 0);
-                Vector4 cur = new Vector4(sc.s2r(new ScreenPoint(dx, dy)), 0);
+                Vector4 zero = new Vector4(screenConverter.s2r(new ScreenPoint(0, 0)), 0);
+                Vector4 cur = new Vector4(screenConverter.s2r(new ScreenPoint(dx, dy)), 0);
                 /*Длина вектор смещения в реальных координатах с точки зрения камеры*/
                 float length = cur.add(zero.mul(-1)).asVector3().length();
                 if (dy < 0)
@@ -197,7 +187,6 @@ public class CameraController implements MouseListener, MouseMotionListener, Mou
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        
     }
 
     @Override
@@ -218,5 +207,4 @@ public class CameraController implements MouseListener, MouseMotionListener, Mou
         }
         onRepaint();
     }
-    
 }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kg2019examples_task4threedimensions.third;
 
 import kg2019examples_task4threedimensions.draw.IDrawer;
@@ -145,5 +141,4 @@ public class Scene {
         /*Рисуем все линии*/
         drawer.drawPolygon(polygons);
     }
-
 }

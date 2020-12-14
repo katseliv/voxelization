@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kg2019examples_task4threedimensions.models;
 
 import kg2019examples_task4threedimensions.math.Vector3;
@@ -15,11 +11,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Описывает трёхмерный отрезок
- *
- * @author Alexey
- */
 public class Line3D implements IModel {
     private final Vector3 p1;
     private final Vector3 p2;
@@ -48,5 +39,4 @@ public class Line3D implements IModel {
         polygons.add(new MyPolygon(p1, p2, p1, Color.BLACK));
         return polygons;
     }
-
 }

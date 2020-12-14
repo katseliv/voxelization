@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kg2019examples_task4threedimensions.draw;
 
 import kg2019examples_task4threedimensions.screen.ScreenConverter;
@@ -11,32 +7,23 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-/**
- * Рисовальщик на графиксе экрана
- * @author Alexey
- */
 public abstract class ScreenGraphicsDrawer implements IDrawer {
-    private final ScreenConverter sc;
-    private final Graphics2D gr;
+    private final ScreenConverter screenConverter;
+    private final Graphics2D graphics2D;
 
-    /**
-     * Создаёт экземпляр рисвальщика
-     * @param sc преобразователь координат
-     * @param gr графикс
-     */
     public ScreenGraphicsDrawer(ScreenConverter sc, Graphics2D gr) {
-        this.sc = sc;
-        this.gr = gr;
+        this.screenConverter = sc;
+        this.graphics2D = gr;
     }
 
     public Graphics2D getGraphics() {
-        return gr;
+        return graphics2D;
     }
 
     public ScreenConverter getScreenConverter() {
-        return sc;
+        return screenConverter;
     }
-    
+
     @Override
     public void draw(Collection<PolyLine3D> polyLines) {
         List<PolyLine3D> lines = new LinkedList<>();
@@ -51,33 +38,19 @@ public abstract class ScreenGraphicsDrawer implements IDrawer {
             oneDraw(pl);
         }
     }
-    
+
     @Override
     public void clear(int color) {
         Graphics2D g = getGraphics();
         Color c = g.getColor();
         g.setColor(new Color(color));
-        g.fillRect(0, 0, sc.getWs(), sc.getHs());
+        g.fillRect(0, 0, screenConverter.getWs(), screenConverter.getHs());
         g.setColor(c);
     }
-    
-    /**
-     * Метод, умеющий рсовать одну полилинию
-     * @param polyline полилиния, которую требуется нарисовать
-     */
+
     protected abstract void oneDraw(PolyLine3D polyline);
-    
-    /**
-     * Должен возвращать фильтр рисуемых полилиний.
-     * С помощью него можно оставить только те из них, которые следует рисовать.
-     * Например, можно исключить те линии, которые находятся "позади"
-     * @return фильтр
-     */
+
     protected abstract IFilter<PolyLine3D> getFilter();
-    
-    /**
-     * Должен возвращать компаратор полилиний для упорядочивания их.
-     * @return компаратор
-     */
+
     protected abstract Comparator<PolyLine3D> getComparator();
 }

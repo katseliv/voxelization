@@ -13,13 +13,21 @@ import static java.lang.StrictMath.cos;
 import static java.lang.StrictMath.sin;
 
 public class Sphere implements IModel {
-    private final float a = 100f;
-    private final float b = 100f;
-    private final float c = 100f;
-    private final int approximate = 30;
+    private float a = 100f;
+    private float b = 100f;
+    private float c = 100f;
+    private int approximate = 30;
     private final Vector3 center;
 
     public Sphere(Vector3 center) {
+        this.center = center;
+    }
+
+    public Sphere(float a, float b, float c, int approximate, Vector3 center) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.approximate = approximate;
         this.center = center;
     }
 

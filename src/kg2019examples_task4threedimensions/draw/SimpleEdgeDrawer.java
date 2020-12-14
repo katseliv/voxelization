@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kg2019examples_task4threedimensions.draw;
 
 import kg2019examples_task4threedimensions.math.Vector3;
@@ -16,20 +12,12 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
 
-/**
- * Реализация рисователя полигонов с помощью рёбер.
- * @author Alexey
- */
 public class SimpleEdgeDrawer extends ScreenGraphicsDrawer {
 
     public SimpleEdgeDrawer(ScreenConverter sc, Graphics2D g) {
         super(sc, g);
     }
-    
-    /**
-     * Рисует одну полилинию на графиксе.
-     * @param polyline полилиния
-     */
+
     @Override
     protected void oneDraw(PolyLine3D polyline) {
         LinkedList<ScreenPoint> points = new LinkedList<>();
@@ -52,28 +40,16 @@ public class SimpleEdgeDrawer extends ScreenGraphicsDrawer {
             getGraphics().drawPolyline(coordinates.getXx(), coordinates.getYy(), coordinates.size());
     }
 
-    /**
-     * В данной реализации возвращаем фильтр, который одобряет все полилинии.
-     * @return фильтр полилиний
-     */
     @Override
     protected IFilter<PolyLine3D> getFilter() {
-        return new IFilter<PolyLine3D>() {
-            @Override
-            public boolean permit(PolyLine3D line) {
-                return true;
-            }
-        };
+        return line -> true;
     }
 
-    /**
-     * Сравниваем полилинии по среднему Z.
-     * @return компаратор
-     */
     @Override
     protected Comparator<PolyLine3D> getComparator() {
         return new Comparator<PolyLine3D>() {
             private static final float EPSILON = 1e-10f;
+
             @Override
             public int compare(PolyLine3D o1, PolyLine3D o2) {
                 float d = o1.avgZ() - o2.avgZ();
@@ -86,7 +62,5 @@ public class SimpleEdgeDrawer extends ScreenGraphicsDrawer {
 
     @Override
     public void drawPolygon(Collection<MyPolygon> polygons) {
-
     }
-
 }

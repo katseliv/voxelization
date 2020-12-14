@@ -3,7 +3,6 @@ package kg2019examples_task4threedimensions.operations;
 import kg2019examples_task4threedimensions.enums.Condition;
 import kg2019examples_task4threedimensions.math.Vector2;
 import kg2019examples_task4threedimensions.math.Vector3;
-import kg2019examples_task4threedimensions.models.Line3D;
 import kg2019examples_task4threedimensions.models.Parallelepiped;
 import kg2019examples_task4threedimensions.models.Surface;
 import kg2019examples_task4threedimensions.third.IModel;
@@ -17,12 +16,25 @@ public class VoxelOperation {
 
     public List<Parallelepiped> modelToVoxelOfCubs(IModel model, float sizeVoxel) {
         polygons = model.getPolygons();
-        List<Vector3> points = new LinkedList<>();
         List<Parallelepiped> cubs = new LinkedList<>();
-        Parallelepiped voxel = getSuitableVoxel(sizeVoxel);
+        Parallelepiped voxel = getBoundaries(sizeVoxel);
 
         float length = (voxel.getRadius() * 2 - sizeVoxel) / 2;
 
+        for (float x = voxel.getCenter().getX() - length; x <= voxel.getCenter().getX() + length; x += sizeVoxel) {
+            for (float y = voxel.getCenter().getY() - length; y <= voxel.getCenter().getY() + length; y += sizeVoxel) {
+                for (float z = voxel.getCenter().getZ() - length; z <= voxel.getCenter().getZ() + length; z += sizeVoxel) {
+                    if (isInnerPoint(new Vector3(x, y, z))) {
+                        cubs.add(new Parallelepiped(sizeVoxel / 2, new Vector3(x, y, z)));
+                    }
+                }
+            }
+        }
+
+        return cubs;
+    }
+
+    private Parallelepiped getBoundaries(float size) {
         float xMax = findMax(polygons, Condition.GET_X);
         float xMin = findMin(polygons, Condition.GET_X);
         float yMax = findMax(polygons, Condition.GET_Y);
@@ -30,56 +42,22 @@ public class VoxelOperation {
         float zMax = findMax(polygons, Condition.GET_Z);
         float zMin = findMin(polygons, Condition.GET_Z);
 
-        System.out.println("xmax " + xMax);
-        System.out.println("xmin " + xMin);
-        System.out.println("ymax " + yMax);
-        System.out.println("ymin " + yMin);
-        System.out.println("zmax " + zMax);
-        System.out.println("zmin " + zMin);
+        float a = Math.max(yMax - yMin, zMax - zMin) / 2f;
+        float b = Math.max((xMax - xMin) / 2f, a), length = size;
 
-//        for (float z = zMin + sizeVoxel / 2; z < zMax + sizeVoxel; z += sizeVoxel) {
-//            for (float y = yMin + sizeVoxel / 2; y < yMax + sizeVoxel; y += sizeVoxel) {
-//                for (float x = xMin + sizeVoxel / 2; x < xMax + sizeVoxel; x += sizeVoxel) {
-//                    if (isInnerPoint(new Vector3(x, y, z))) {
-//                        points.add(new Vector3(x, y, z));
-//                    }
-//                }
-//            }
-//        }
-
-//        for (float z = voxel.getCenter().getX() + sizeVoxel / 2; z < zMax + sizeVoxel; z += sizeVoxel) {
-//            for (float y = voxel.getCenter().getY() + sizeVoxel / 2; y < yMax + sizeVoxel; y += sizeVoxel) {
-//                for (float x = voxel.getCenter().getZ() + sizeVoxel / 2; x < xMax + sizeVoxel; x += sizeVoxel) {
-//                    if (isInnerPoint(new Vector3(x, y, z))) {
-//                        points.add(new Vector3(x, y, z));
-//                    }
-//                }
-//            }
-//        }
-
-        for (float x = voxel.getCenter().getX() - length; x <= voxel.getCenter().getX() + length; x += sizeVoxel) {
-            for (float y = voxel.getCenter().getY() - length; y <= voxel.getCenter().getY() + length; y += sizeVoxel) {
-                for (float z = voxel.getCenter().getZ() - length; z <= voxel.getCenter().getZ() + length; z += sizeVoxel) {
-
-                    if (isInnerPoint(new Vector3(x, y, z))) {
-//                        points.add(new Vector3(x, y, z));
-                        cubs.add(new Parallelepiped(new Vector3(x, y, z), sizeVoxel / 2));
-//                        System.out.println("\u001B[34m" + new Vector3(x, y, z));
-//                        continue;
-                    }
-//                    cubs.add(new Parallelepiped(new Vector3(x, y, z), sizeVoxel / 4));
-//                    System.out.println("\u001B[33m" + new Vector3(x, y, z));
-//                    points.add(new Vector3(x, y, z));
-                }
-            }
+        while (length <= b) {
+            length *= 2;
         }
 
-//        return fillWithCubs(points, sizeVoxel);
-        return cubs;
+        float x = ((xMax - xMin) / 2f + xMin);
+        float y = ((yMax - yMin) / 2f + yMin);
+        float z = ((zMax - zMin) / 2f + zMin);
+
+        return new Parallelepiped(length, new Vector3(x, y, z));
     }
 
     private float findMax(List<MyPolygon> polygons, Condition c) {
-        float max = Float.MIN_VALUE;
+        float max = -Float.MAX_VALUE;
 
         for (MyPolygon polygon : polygons) {
             List<Vector3> points = new LinkedList<>();
@@ -88,19 +66,7 @@ public class VoxelOperation {
             points.add(polygon.getPoint3());
 
             for (Vector3 point : points) {
-                if (isMax(point, max, c)) {
-                    max = getCoordinate(point, c);
-                }
-            }
-        }
-        return max;
-    }
-
-    private float findMaxPoint(List<Vector3> points, Condition c) {
-        float max = Float.MIN_VALUE;
-        for (Vector3 point : points) {
-            if (isMax(point, max, c)) {
-                max = getCoordinate(point, c);
+                max = getMax(point, max, c);
             }
         }
         return max;
@@ -116,76 +82,40 @@ public class VoxelOperation {
             points.add(polygon.getPoint3());
 
             for (Vector3 point : points) {
-                if (!isMax(point, min, c)) {
-                    min = getCoordinate(point, c);
-                }
+                min = getMin(point, min, c);
             }
         }
         return min;
     }
 
-    private float findMinPoint(List<Vector3> points, Condition c) {
-        float min = Float.MAX_VALUE;
-        for (Vector3 point : points) {
-            if (!isMax(point, min, c)) {
-                min = getCoordinate(point, c);
-            }
-        }
-        return min;
-    }
-
-    private boolean isMax(Vector3 p1, float p2, Condition c) {
+    private float getMax(Vector3 p1, float p2, Condition c) {
         switch (c) {
             case GET_X:
-                return p1.getX() > p2;
+                return Math.max(p1.getX(), p2);
             case GET_Y:
-                return p1.getY() > p2;
+                return Math.max(p1.getY(), p2);
             case GET_Z:
-                return p1.getZ() > p2;
+                return Math.max(p1.getZ(), p2);
         }
-        return false;
+        return -Float.MAX_VALUE;
     }
 
-    private float getCoordinate(Vector3 point, Condition c) {
+    private float getMin(Vector3 p1, float p2, Condition c) {
         switch (c) {
             case GET_X:
-                return point.getX();
+                return Math.min(p1.getX(), p2);
             case GET_Y:
-                return point.getY();
+                return Math.min(p1.getY(), p2);
             case GET_Z:
-                return point.getZ();
+                return Math.min(p1.getZ(), p2);
         }
-        return Float.MIN_VALUE;
-    }
-
-    private Parallelepiped getSuitableVoxel(float size) {
-        float xMax = findMax(polygons, Condition.GET_X);
-        float xMin = findMin(polygons, Condition.GET_X);
-        float yMax = findMax(polygons, Condition.GET_Y);
-        float yMin = findMin(polygons, Condition.GET_Y);
-        float zMax = findMax(polygons, Condition.GET_Z);
-        float zMin = findMin(polygons, Condition.GET_Z);
-
-        float b = Math.max(yMax - yMin, zMax - zMin) / 2f;
-        float a = Math.max((xMax - xMin) / 2f, b), length = size;
-        while (length <= a) {
-            length *= 2;
-        }
-        float x = (((xMax - xMin) / 2f + xMin));
-        float y = (((yMax - yMin) / 2f) + yMin);
-        float z = (((zMax - zMin) / 2f) + zMin);
-        return new Parallelepiped(new Vector3(x, y, z), length);
+        return Float.MAX_VALUE;
     }
 
     public boolean isInnerPoint(Vector3 point) {
         int numberX = getNumberOfIntersectionsWithSurfaceX(point.getY(), point.getZ()) - 1;
         int numberY = getNumberOfIntersectionsWithSurfaceY(point.getX(), point.getZ()) - 1;
         int numberZ = getNumberOfIntersectionsWithSurfaceZ(point.getX(), point.getY()) - 1;
-
-//        return numberX != 0 && numberY != 0 && numberZ != 0 &&
-//                numberX % 2 == 0
-//                && numberY % 2 == 0
-//                && numberZ % 2 == 0;
 
         return numberX % 2 == 1
                 && numberY % 2 == 1
@@ -278,7 +208,7 @@ public class VoxelOperation {
         List<Parallelepiped> cubs = new LinkedList<>();
 
         for (Vector3 point : points) {
-            cubs.add(new Parallelepiped(new Vector3(point.getX(), point.getY(), point.getZ()), length / 2));
+            cubs.add(new Parallelepiped(length / 2, new Vector3(point.getX(), point.getY(), point.getZ())));
         }
 
         return cubs;
@@ -287,91 +217,80 @@ public class VoxelOperation {
     public List<Parallelepiped> surfaceToVoxelOfCubs(Surface surface, float height, float sizeVoxel) {
         polygons = surface.getPolygons();
         List<Vector3> points = new LinkedList<>();
-        List<LinkedList<Vector3>> lists = surface.getPoints();
-
-        for (int i = 0; i < lists.size() - 1; i++) {
-            for (int j = 0; j < lists.get(i).size() - 1; j++) {
-                List<Vector3> buffer = new LinkedList<>();
-                buffer.add(lists.get(i).get(j));
-                buffer.add(lists.get(i + 1).get(j));
-                buffer.add(lists.get(i).get(j + 1));
-                buffer.add(lists.get(i + 1).get(j + 1));
-
-                Vector2 middle = new Vector2(buffer.get(1).getX(), buffer.get(2).getZ());
-
-                float min = findMinPoint(buffer, Condition.GET_Z);
-
-                points.addAll(fill(height, min, middle, sizeVoxel));
-            }
-        }
-
-        for (LinkedList<Vector3> list : lists) {
-            for (Vector3 vector3 : list) {
-
-            }
-        }
-
-
-        Parallelepiped voxel = getSuitableVoxel(sizeVoxel);
-
-        float length = (voxel.getRadius() - sizeVoxel) / 2;
 
         float xMax = findMax(polygons, Condition.GET_X);
-        float xMin = findMin(polygons, Condition.GET_X);
         float yMax = findMax(polygons, Condition.GET_Y);
-        float yMin = findMin(polygons, Condition.GET_Y);
-        float zMax = findMax(polygons, Condition.GET_Z);
-//        System.out.println(zMax + " z max");
-        float zMin = findMin(polygons, Condition.GET_Z);
-//        System.out.println(zMin + " z min");
 
-//        for (float z = -height + sizeVoxel / 2; z < zMin; z += sizeVoxel) {
-//            for (float y = yMin + sizeVoxel / 2; y < yMax; y += sizeVoxel) {
-//                for (float x = xMin + sizeVoxel / 2; x < xMax; x += sizeVoxel) {
-//                    points.add(new Vector3(x, y, z));
-//                }
-//            }
-//        }
+        for (float i = surface.getStartPoint().getX() + sizeVoxel / 2; i < xMax; i += sizeVoxel) {
+            for (float j = surface.getStartPoint().getY() + sizeVoxel / 2; j < yMax; j += sizeVoxel) {
 
-//        for (MyPolygon polygon : polygons) {
-//            List<Vector3> points1 = new LinkedList<>();
-//            points1.add(polygon.getPoint1());
-//            points1.add(polygon.getPoint2());
-//            points1.add(polygon.getPoint3());
-//
-//            float limit = findMinPoint(points1, Condition.GET_Z);
-//
-//            for (float z = zMin + sizeVoxel / 2; z < limit; z += sizeVoxel) {
-//                points.add(new Vector3(x, y, z));
-//            }
-//
-//        }
+                MyPolygon polygon = getIntersectingPolygonWithSurface(i, j);
+                List<Vector3> buffer = new LinkedList<>();
 
-//        for (float z = zMin + sizeVoxel / 2; z < zMax; z += sizeVoxel) {
-//            for (float y = yMin + sizeVoxel / 2; y < yMax; y += sizeVoxel) {
-//                for (float x = xMin + sizeVoxel / 2; x < xMax; x += sizeVoxel) {
-//                    if (isInnerPointForSurface(new Vector3(x, y, z))) {
-//                        points.add(new Vector3(x, y, z));
-//                    }
-//                }
-//            }
-//        }
+                if (polygon != null) {
+                    buffer.add(new Vector3(polygon.getPoint1().getX(), polygon.getPoint1().getY(), polygon.getPoint1().getZ()));
+                    buffer.add(new Vector3(polygon.getPoint2().getX(), polygon.getPoint2().getY(), polygon.getPoint2().getZ()));
+                    buffer.add(new Vector3(polygon.getPoint3().getX(), polygon.getPoint3().getY(), polygon.getPoint3().getZ()));
+                } else {
+                    continue;
+                }
+
+                float max = findMaxPoint(buffer, Condition.GET_Z);
+
+                for (float k = max - sizeVoxel; k < max; k += sizeVoxel) {
+                    points.add(new Vector3(i, j, k));
+                }
+
+            }
+        }
 
         return fillWithCubs(points, sizeVoxel);
     }
 
-    private List<Vector3> fill(float height, float limit, Vector2 middle, float step) {
-        List<Vector3> points = new LinkedList<>();
-        for (float i = -height; i < limit; i += step) {
-            points.add(new Vector3(middle.getP1(), middle.getP2(), i));
+    private MyPolygon getIntersectingPolygonWithSurface(float x, float y) {
+        for (MyPolygon polygon : polygons) {
+            List<Vector2> points = new LinkedList<>();
+
+            points.add(new Vector2(polygon.getPoint1().getX(), polygon.getPoint1().getY()));
+            points.add(new Vector2(polygon.getPoint2().getX(), polygon.getPoint2().getY()));
+            points.add(new Vector2(polygon.getPoint3().getX(), polygon.getPoint3().getY()));
+
+            if (calculateSquare(points.get(0), points.get(1), points.get(2)) != 0) {
+                if (triangleContainThisPoint(points, new Vector2(x, y)) != 0) {
+                    return polygon;
+                }
+            }
         }
 
-        return points;
+        return null;
     }
 
-    public List<MyPolygon> modelToVoxelOfPolygon(IModel model) {
+    private float findMaxPoint(List<Vector3> points, Condition c) {
+        float max = -Float.MAX_VALUE;
+        for (Vector3 point : points) {
+            max = getMax(point, max, c);
+        }
+        return max;
+    }
 
-        return null;
+    public List<MyPolygon> modelToVoxelOfPolygon(IModel model, float sizeVoxel) {
+        polygons = model.getPolygons();
+        List<MyPolygon> polygonsOfModel = new LinkedList<>();
+        Parallelepiped voxel = getBoundaries(sizeVoxel);
+
+        float length = (voxel.getRadius() * 2 - sizeVoxel) / 2;
+
+        for (float x = voxel.getCenter().getX() - length; x <= voxel.getCenter().getX() + length; x += sizeVoxel) {
+            for (float y = voxel.getCenter().getY() - length; y <= voxel.getCenter().getY() + length; y += sizeVoxel) {
+                for (float z = voxel.getCenter().getZ() - length; z <= voxel.getCenter().getZ() + length; z += sizeVoxel) {
+                    if (isInnerPoint(new Vector3(x, y, z))) {
+                        polygonsOfModel.addAll(new Parallelepiped(sizeVoxel / 2, new Vector3(x, y, z)).getPolygons());
+                    }
+                }
+            }
+        }
+
+        return polygonsOfModel;
     }
 
     public List<MyPolygon> surfaceToVoxelOfPolygon(IModel model) {

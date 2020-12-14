@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kg2019examples_task4threedimensions.models;
 
 import kg2019examples_task4threedimensions.math.Vector3;
@@ -14,23 +10,12 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Описывает параллелипипед по двум диагональным точкам
- *
- * @author Alexey
- */
 public class Parallelepiped implements IModel {
     private final Vector3 LTF;
     private final Vector3 RBN;
     private final Vector3 center;
     private final float radius;
 
-    /**
-     * Создаёт экземпляр параллелипипеда
-     *
-     * @param LTF Левая Верхняя Дальняя точка (Left Top Far)
-     * @param RBN Правая Нижняя Ближняя точка (Right Bottom Near)
-     */
     public Parallelepiped(Vector3 LTF, Vector3 RBN) {
         this.LTF = LTF;
         this.RBN = RBN;
@@ -40,7 +25,7 @@ public class Parallelepiped implements IModel {
                 LTF.getZ() + radius);
     }
 
-    public Parallelepiped(Vector3 center, float radius) {
+    public Parallelepiped(float radius, Vector3 center) {
         this.LTF = new Vector3(
                 center.getX() - radius,
                 center.getY() - radius,
@@ -166,5 +151,4 @@ public class Parallelepiped implements IModel {
                 new Vector3(RBN.getX(), RBN.getY(), RBN.getZ()), color));
         return polygons;
     }
-
 }

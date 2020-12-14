@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kg2019examples_task4threedimensions.third;
 
 import kg2019examples_task4threedimensions.math.Vector3;
@@ -17,5 +13,5 @@ public interface ICamera {
      * @param v преобразуемая точка
      * @return новая точка
      */
-    public Vector3 w2s(Vector3 v);
+    Vector3 w2s(Vector3 v);
 }

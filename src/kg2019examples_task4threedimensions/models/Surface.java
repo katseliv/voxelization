@@ -4,40 +4,54 @@ import kg2019examples_task4threedimensions.math.Vector3;
 import kg2019examples_task4threedimensions.third.IModel;
 import kg2019examples_task4threedimensions.third.MyPolygon;
 import kg2019examples_task4threedimensions.third.PolyLine3D;
+
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Surface implements IModel {
-    private final int height;
+    private final int length;
     private final int width;
-    private final Vector3 center;
+    private final Vector3 startPoint;
     private final List<LinkedList<Vector3>> points = new LinkedList<>();
 
-    public Surface(Vector3 center, int height, int width) {
-        this.center = center;
-        this.height = height;
+    public Surface(int length, int width, Vector3 center) {
+        this.startPoint = center;
+        this.length = length;
         this.width = width;
         create();
     }
 
     private void create() {
-        int coefficient = 300;
+        int coefficient = 40;
 
-        for (int i = 0; i < height; i++) {
+        for (int i = 0; i < width; i++) {
             LinkedList<Vector3> buffer = new LinkedList<>();
-            for (int j = 0; j < width; j++) {
+            for (int j = 0; j < length; j++) {
                 float x = i * 0.2f;
                 float y = j * 0.2f;
                 float z = (float) (2 * Math.sin(x) * Math.cos(y) + Math.sin(x));
 
-                buffer.add(j, new Vector3(
-                        x * coefficient + center.getX(),
-                        y * coefficient + center.getY(),
-                        z * coefficient + center.getZ()));
+                buffer.add(new Vector3(
+                        x * width + startPoint.getX(),
+                        y * length + startPoint.getY(),
+                        z * coefficient + startPoint.getZ()));
+
             }
-            points.add(i, buffer);
+            points.add(buffer);
         }
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public Vector3 getStartPoint() {
+        return startPoint;
     }
 
     public List<LinkedList<Vector3>> getPoints() {
@@ -49,7 +63,7 @@ public class Surface implements IModel {
         List<PolyLine3D> polyLinePoints = new LinkedList<>();
         List<Vector3> listOfPoints = new LinkedList<>();
 
-        for (int i = 0; i < height - 1; i++) {
+        for (int i = 0; i < length - 1; i++) {
             for (int j = 0; j < width - 1; j++) {
                 Vector3 v1 = points.get(i).get(j);
                 Vector3 v2 = points.get(i + 1).get(j);
@@ -77,8 +91,8 @@ public class Surface implements IModel {
         List<MyPolygon> polygons = new LinkedList<>();
         MyPolygon polygon;
 
-        for (int i = 0; i < height - 1; i++) {
-            for (int j = 0; j < width - 1; j++) {
+        for (int i = 0; i < width - 1; i++) {
+            for (int j = 0; j < length - 1; j++) {
                 Vector3 v1 = points.get(i).get(j);
                 Vector3 v2 = points.get(i + 1).get(j);
                 Vector3 v3 = points.get(i + 1).get(j + 1);

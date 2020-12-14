@@ -4,7 +4,6 @@ import kg2019examples_task4threedimensions.math.Vector3;
 import kg2019examples_task4threedimensions.third.IModel;
 import kg2019examples_task4threedimensions.third.MyPolygon;
 import kg2019examples_task4threedimensions.third.PolyLine3D;
-
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,12 +12,19 @@ import static java.lang.StrictMath.cos;
 import static java.lang.StrictMath.sin;
 
 public class Cylinder implements IModel {
-    private final float height = 1000f;
-    private final float radius = 1000f;
-    private final int approximate = 30;
+    private float height = 1000f;
+    private float radius = 1000f;
+    private int approximate = 30;
     private final Vector3 center;
 
     public Cylinder(Vector3 center) {
+        this.center = center;
+    }
+
+    public Cylinder(float height, float radius, int approximate, Vector3 center) {
+        this.height = height;
+        this.radius = radius;
+        this.approximate = approximate;
         this.center = center;
     }
 

@@ -1,10 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kg2019examples_task4threedimensions.math;
-
-import java.util.Arrays;
 
 /**
  * Класс, хранящий трёхмерный вектор / точку в трёхмерном пространстве.
@@ -66,12 +60,5 @@ public class Vector3 {
         if (lenSqr < EPSILON)
             return 0;
         return (float)Math.sqrt(lenSqr);
-    }
-
-    @Override
-    public String toString() {
-        return "Vector3{" +
-                "values = " + Arrays.toString(values) +
-                '}';
     }
 }

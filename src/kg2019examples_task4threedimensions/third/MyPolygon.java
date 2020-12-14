@@ -8,7 +8,7 @@ public class MyPolygon {
     private final Vector3 point1;
     private final Vector3 point2;
     private final Vector3 point3;
-    private Color color;
+    private final Color color;
 
     public MyPolygon(Vector3 point1, Vector3 point2, Vector3 point3, Color color) {
         this.point1 = point1;

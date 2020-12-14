@@ -11,21 +11,21 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class PolygonDrawer implements IDrawer{
-    private final ScreenConverter sc;
-    private final Graphics2D gr;
+public class PolygonDrawer implements IDrawer {
+    private final ScreenConverter screenConverter;
+    private final Graphics2D graphics2D;
 
     public PolygonDrawer(ScreenConverter sc, Graphics2D gr) {
-        this.sc = sc;
-        this.gr = gr;
+        this.screenConverter = sc;
+        this.graphics2D = gr;
     }
 
     public Graphics2D getGraphics() {
-        return gr;
+        return graphics2D;
     }
 
     public ScreenConverter getScreenConverter() {
-        return sc;
+        return screenConverter;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class PolygonDrawer implements IDrawer{
         Graphics2D g = getGraphics();
         Color c = g.getColor();
         g.setColor(new Color(color));
-        g.fillRect(0, 0, sc.getWs(), sc.getHs());
+        g.fillRect(0, 0, screenConverter.getWs(), screenConverter.getHs());
         g.setColor(c);
     }
 
@@ -46,20 +46,20 @@ public class PolygonDrawer implements IDrawer{
     public void drawPolygon(Collection<MyPolygon> polygons) {
         List<MyPolygon> myPolygons = new LinkedList<>();
         IFilter<MyPolygon> filter = getFilter();
-        for(MyPolygon polygon : polygons){
+        for (MyPolygon polygon : polygons) {
             if (filter.permit(polygon))
                 myPolygons.add(polygon);
         }
 
         MyPolygon[] array = myPolygons.toArray(new MyPolygon[0]);
         Arrays.sort(array, getComparator());
-        for (MyPolygon polygon : array){
+        for (MyPolygon polygon : array) {
             oneDraw(polygon);
         }
 
     }
 
-    private void oneDraw(MyPolygon polygon){
+    protected void oneDraw(MyPolygon polygon) {
         LinkedList<ScreenPoint> points = new LinkedList<>();
 
         points.add(getScreenConverter().r2s(polygon.getPoint1()));
@@ -82,44 +82,35 @@ public class PolygonDrawer implements IDrawer{
     protected void oneDraw(PolyLine3D polyline) {
         LinkedList<ScreenPoint> points = new LinkedList<>();
         /*переводим все точки в экранные*/
-        for (Vector3 v : polyline.getPoints())
+        for (Vector3 v : polyline.getPoints()) {
             points.add(getScreenConverter().r2s(v));
+        }
         getGraphics().setColor(Color.BLACK);
         /*если точек меньше двух, то рисуем отдельными алгоритмами*/
         if (points.size() < 2) {
-            if (points.size() > 0)
+            if (points.size() > 0) {
                 getGraphics().fillRect(points.get(0).getI(), points.get(0).getJ(), 1, 1);
+            }
             return;
         }
         /*создаём хранилище этих точек в виде двух массивов*/
         ScreenCoordinates coordinates = new ScreenCoordinates(points);
         /*если линия замкнута - рисем полиго, иначе - полилинию*/
-        if (polyline.isClosed())
+        if (polyline.isClosed()) {
             getGraphics().drawPolygon(coordinates.getXx(), coordinates.getYy(), coordinates.size());
-        else
+        } else {
             getGraphics().drawPolyline(coordinates.getXx(), coordinates.getYy(), coordinates.size());
+        }
     }
 
-    /**
-     * В данной реализации возвращаем фильтр, который одобряет все полилинии.
-     * @return фильтр полилиний
-     */
     protected IFilter<MyPolygon> getFilter() {
-        return new IFilter<MyPolygon>() {
-            @Override
-            public boolean permit(MyPolygon polygon) {
-                return true;
-            }
-        };
+        return polygon -> true;
     }
 
-    /**
-     * Сравниваем полилинии по среднему Z.
-     * @return компаратор
-     */
     protected Comparator<MyPolygon> getComparator() {
         return new Comparator<MyPolygon>() {
             private static final float EPSILON = 1e-10f;
+
             @Override
             public int compare(MyPolygon o1, MyPolygon o2) {
                 float d = o1.avgZ() - o2.avgZ();
