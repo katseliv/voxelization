@@ -23,11 +23,6 @@ public class Scene {
 
     private final int backgroundColor;
 
-    /**
-     * Создаём сцену с заданным фоном
-     *
-     * @param backgroundColorRGB цвет фона.
-     */
     public Scene(int backgroundColorRGB) {
         this.backgroundColor = backgroundColorRGB;
         this.showAxes = false;

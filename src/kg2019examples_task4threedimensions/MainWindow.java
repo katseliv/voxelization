@@ -31,6 +31,12 @@ public class MainWindow extends JFrame {
     private final JTextField fieldZ = new JTextField();
     private final JTextField textField5 = new JTextField();
 
+    private JTextField textFieldWidth;
+    private JTextField textFieldLength;
+    private JTextField fieldXStartPoint;
+    private JTextField fieldYStartPoint;
+    private JTextField fieldZStartPoint;
+
     private final JButton buttonLoadInputFromFile = new JButton("Load File");
     private final JButton voxelizate = new JButton("Voxelizate");
     private final JButton clear = new JButton("Clear");
@@ -58,42 +64,42 @@ public class MainWindow extends JFrame {
 
         JRadioButton sphere = new JRadioButton("Sphere", true);
         sphere.setPreferredSize(new Dimension(300, 25));
-        sphere.setFont(FONT);
         sphere.addActionListener(e -> {
             clear();
             setStartPanel();
             repaint();
         });
+        sphere.setFont(FONT);
         model.add(sphere);
 
         JRadioButton pyramid = new JRadioButton("Pyramid", false);
         pyramid.setPreferredSize(new Dimension(300, 25));
-        pyramid.setFont(FONT);
         pyramid.addActionListener(e -> {
             clear();
             setPanelForPyramidOrCylinder();
             repaint();
         });
+        pyramid.setFont(FONT);
         model.add(pyramid);
 
         JRadioButton cylinder = new JRadioButton("Cylinder", false);
         cylinder.setPreferredSize(new Dimension(300, 25));
-        cylinder.setFont(FONT);
         cylinder.addActionListener(e -> {
             clear();
             setPanelForPyramidOrCylinder();
             repaint();
         });
+        cylinder.setFont(FONT);
         model.add(cylinder);
 
         JRadioButton cube = new JRadioButton("Cube", false);
         cube.setPreferredSize(new Dimension(300, 25));
-        cube.setFont(FONT);
         cube.addActionListener(e -> {
             clear();
             setCubePanel();
             repaint();
         });
+        cube.setFont(FONT);
         model.add(cube);
 
         ButtonGroup buttonGroup = new ButtonGroup();
@@ -112,41 +118,70 @@ public class MainWindow extends JFrame {
 
         JButton addIModel = new JButton("Add");
         addIModel.setPreferredSize(new Dimension(300, 25));
-        addIModel.setFont(FONT);
         addIModel.addActionListener(e -> {
             float a;
             float b;
-            float x = Float.parseFloat(fieldX.getText());
-            float y = Float.parseFloat(fieldY.getText());
-            float z = Float.parseFloat(fieldZ.getText());
+            float x;
+            float y;
+            float z;
             int approximate;
 
             IModel model = null;
-            if (sphere.isSelected()) {
+            if (sphere.isSelected() && !surface.isShowing()) {
                 a = Float.parseFloat(textField1.getText());
                 b = Float.parseFloat(textField2.getText());
                 float c = Float.parseFloat(textField3.getText());
+
+                x = Float.parseFloat(fieldX.getText());
+                y = Float.parseFloat(fieldY.getText());
+                z = Float.parseFloat(fieldZ.getText());
+
                 approximate = Integer.parseInt(textField5.getText());
                 model = new Sphere(a, b, c, approximate, new Vector3(x, y, z));
-            } else if (pyramid.isSelected()) {
+            } else if (pyramid.isSelected() && !surface.isShowing()) {
                 a = Float.parseFloat(textField1.getText());
                 b = Float.parseFloat(textField2.getText());
+
+                x = Float.parseFloat(fieldX.getText());
+                y = Float.parseFloat(fieldY.getText());
+                z = Float.parseFloat(fieldZ.getText());
+
                 approximate = Integer.parseInt(textField5.getText());
                 model = new Pyramid(a, b, approximate, new Vector3(x, y, z));
-            } else if (cylinder.isSelected()) {
+            } else if (cylinder.isSelected() && !surface.isShowing()) {
                 a = Float.parseFloat(textField1.getText());
                 b = Float.parseFloat(textField2.getText());
+
+                x = Float.parseFloat(fieldX.getText());
+                y = Float.parseFloat(fieldY.getText());
+                z = Float.parseFloat(fieldZ.getText());
+
                 approximate = Integer.parseInt(textField5.getText());
                 model = new Cylinder(a, b, approximate, new Vector3(x, y, z));
-            } else if (cube.isSelected()) {
+            } else if (cube.isSelected() && !surface.isShowing()) {
                 b = Float.parseFloat(textField2.getText());
+
+                x = Float.parseFloat(fieldX.getText());
+                y = Float.parseFloat(fieldY.getText());
+                z = Float.parseFloat(fieldZ.getText());
+
                 model = new Parallelepiped(b, new Vector3(x, y, z));
+            } else if (surface.isShowing()) {
+                int length = Integer.parseInt(textFieldLength.getText());
+                int width = Integer.parseInt(textFieldWidth.getText());
+
+                x = Float.parseFloat(fieldXStartPoint.getText());
+                y = Float.parseFloat(fieldYStartPoint.getText());
+                z = Float.parseFloat(fieldZStartPoint.getText());
+
+                model = new Surface(length, width, new Vector3(x, y, z));
             }
 
             if (model != null)
                 drawPanel.scene.getModelsList().add(model);
             drawPanel.repaint();
         });
+        addIModel.setFont(FONT);
         buttonsPanel.add(addIModel);
     }
 
@@ -159,6 +194,7 @@ public class MainWindow extends JFrame {
         buttonLoadInputFromFile.setFont(FONT);
         buttonsPanel.add(buttonLoadInputFromFile);
 
+        voxelizate.setPreferredSize(new Dimension(300, 25));
         voxelizate.addActionListener(actionEvent -> {
             try {
                 drawPanel.voxelizate();
@@ -167,11 +203,10 @@ public class MainWindow extends JFrame {
                 System.out.println(e.getMessage());
             }
         });
-
-        voxelizate.setPreferredSize(new Dimension(300, 25));
         voxelizate.setFont(FONT);
         buttonsPanel.add(voxelizate);
 
+        clear.setPreferredSize(new Dimension(300, 25));
         clear.addActionListener(actionEvent -> {
             try {
                 drawPanel.scene.getModelsList().clear();
@@ -180,8 +215,6 @@ public class MainWindow extends JFrame {
                 System.out.println(e.getMessage());
             }
         });
-
-        clear.setPreferredSize(new Dimension(300, 25));
         clear.setFont(FONT);
         buttonsPanel.add(clear);
     }
@@ -310,39 +343,39 @@ public class MainWindow extends JFrame {
         model.add(fieldZ);
     }
 
-    private void setSurfacePanel(){
-        Label label1 = new Label("Height");
-        label1.setPreferredSize(new Dimension(200, 25));
-        label1.setFont(FONT);
+    private void setSurfacePanel() {
+        JLabel labelLength = new JLabel("Height");
+        labelLength.setPreferredSize(new Dimension(200, 25));
+        labelLength.setFont(FONT);
 
-        TextField textField1 = new TextField();
-        textField1.setPreferredSize(new Dimension(WIDTH_OF_PANEL, 25));
-        surface.add(label1);
-        surface.add(textField1);
+        textFieldLength = new JTextField();
+        textFieldLength.setPreferredSize(new Dimension(WIDTH_OF_PANEL, 25));
+        surface.add(labelLength);
+        surface.add(textFieldLength);
 
-        Label label2 = new Label("Width");
-        label2.setPreferredSize(new Dimension(200, 25));
-        label2.setFont(FONT);
+        JLabel labelWidth = new JLabel("Width");
+        labelWidth.setPreferredSize(new Dimension(200, 25));
+        labelWidth.setFont(FONT);
 
-        TextField textField2 = new TextField();
-        textField2.setPreferredSize(new Dimension(WIDTH_OF_PANEL, 25));
-        surface.add(label2);
-        surface.add(textField2);
+        textFieldWidth = new JTextField();
+        textFieldWidth.setPreferredSize(new Dimension(WIDTH_OF_PANEL, 25));
+        surface.add(labelWidth);
+        surface.add(textFieldWidth);
 
-        Label label4 = new Label("Start");
-        label4.setPreferredSize(new Dimension(200, 25));
-        label4.setFont(FONT);
+        JLabel labelStartPoint = new JLabel("Start");
+        labelStartPoint.setPreferredSize(new Dimension(200, 25));
+        labelStartPoint.setFont(FONT);
 
-        TextField fieldX = new TextField();
-        TextField fieldY = new TextField();
-        TextField fieldZ = new TextField();
-        fieldX.setPreferredSize(new Dimension(WIDTH_COORDINATE_PANEL, 25));
-        fieldY.setPreferredSize(new Dimension(WIDTH_COORDINATE_PANEL, 25));
-        fieldZ.setPreferredSize(new Dimension(WIDTH_COORDINATE_PANEL, 25));
-        surface.add(label4);
-        surface.add(fieldX);
-        surface.add(fieldY);
-        surface.add(fieldZ);
+        fieldXStartPoint = new JTextField();
+        fieldYStartPoint = new JTextField();
+        fieldZStartPoint = new JTextField();
+        fieldXStartPoint.setPreferredSize(new Dimension(WIDTH_COORDINATE_PANEL, 25));
+        fieldYStartPoint.setPreferredSize(new Dimension(WIDTH_COORDINATE_PANEL, 25));
+        fieldZStartPoint.setPreferredSize(new Dimension(WIDTH_COORDINATE_PANEL, 25));
+        surface.add(labelStartPoint);
+        surface.add(fieldXStartPoint);
+        surface.add(fieldYStartPoint);
+        surface.add(fieldZStartPoint);
     }
 
     private void clear() {
@@ -355,7 +388,7 @@ public class MainWindow extends JFrame {
         model.remove(textField1);
         model.remove(textField2);
         model.remove(textField3);
-        model.remove(fieldX);
+        model.remove(fieldXStartPoint);
         model.remove(textField5);
     }
 }

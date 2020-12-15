@@ -12,6 +12,9 @@ import kg2019examples_task4threedimensions.third.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 
 public class DrawPanel extends JPanel implements CameraController.RepaintListener {
     public final Scene scene = new Scene(Color.BLACK.getRGB());
@@ -33,8 +36,22 @@ public class DrawPanel extends JPanel implements CameraController.RepaintListene
         addMouseWheelListener(cameraController);
     }
 
-    void voxelizate() {
+    public void voxelizate() {
         VoxelOperation voxelOperation = new VoxelOperation();
+        LinkedList<IModel> models = new LinkedList<>();
+        LinkedList<IModel> surfaces = new LinkedList<>();
+
+        for (IModel m : scene.getModelsList()) {
+            voxelOperation.modelToVoxelOfCubs(m, 50f);
+            if (m instanceof Surface) {
+                surfaces.addAll(voxelOperation.surfaceToVoxelOfCubs((Surface) m, 400f, 10f));
+            } else {
+                models.addAll(voxelOperation.modelToVoxelOfCubs(m, 10f));
+            }
+        }
+
+        scene.getModelsList().addAll(models);
+        scene.getModelsList().addAll(surfaces);
 
 //        scene.getModelsList().add(new Parallelepiped(new Vector3(1, 2, 3),new Vector3(-1, -2, -3) ));
 
